@@ -1,30 +1,47 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import dashboard from './dashboard';
 import Auth from './auth';
 import './App.css';
-import { useSelector } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './redux/store';
+import Hero from './auth/hero';
 
-function App() {
+function ProviderConfig() {
   const isLoggedIn = useSelector((state: any) => {
     return state.auth.isLoggedIn
   });
 
   return (
-    <div className="App">
+    <div className="App header-bg">
+      <div className="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
       {
         isLoggedIn ? (
           <Routes>
-            <Route path='/' Component={dashboard}/>
+            <Route path='/*' Component={dashboard}/>
           </Routes>
         ) : 
         (
           <Routes>
-            <Route path='/auth' Component={Auth}/>
+            <Route path='/' element={<Hero/>} />
+            <Route path='/*' element={<Navigate to="/auth/signup" />} />
+            <Route path='/auth/*' Component={Auth}/>
           </Routes>
         )
       }
+      </div>
     </div>
   );
+}
+
+const App = () => {
+  return (
+    <Provider store={store}>
+      <PersistGate persistor={persistor} >
+        <ProviderConfig></ProviderConfig>
+      </PersistGate>
+    </Provider>
+  )
 }
 
 export default App;
