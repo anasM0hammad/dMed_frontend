@@ -5,7 +5,6 @@ import Hero from './hero';
 const Auth = () => {
     return (
         <Routes>
-            <Route path='/' Component={Hero}></Route>
             <Route path='/signup' Component={Signup}></Route>
             <Route path="/*" element={<Navigate to={'/'}></Navigate>}></Route>
         </Routes>
