@@ -1,6 +1,59 @@
 import { Link } from "react-router-dom";
+import { getWeb3 } from "../services/web3.services";
+import { toast } from "react-toastify";
+import * as authService from '../services/auth.service';
 
 const Hero = () => {
+
+    const getNonce = async (address: string) => {
+      try{
+        const nonce = await authService.getNonce(address);
+        if(!nonce){
+          toast.error('Nonce is empty');
+          throw Error('empty nonce');
+        }
+        return nonce;
+      }
+      catch(err){
+        toast.error('Error fetching nonce');
+        throw Error('unknown error');
+      }
+    }
+
+    const getSignature = async (address: string, nonce: number) => {
+      try{
+        const web3 = getWeb3();
+        const signature = await web3.eth.personal.sign(`I'm signing my one time nonce ${nonce}`, address, 'hello Anas');
+        return signature; 
+      }
+      catch(err){
+        toast.error('Signature generation failed');
+      }
+    }
+
+    const onLogin = async () => {
+      const web3 = getWeb3();
+
+      try{
+        const address = await web3.eth.getCoinbase();
+        if(!address){
+          toast.error('No account found');
+          return;
+        }
+
+        const nonce = await getNonce(address);
+        const signature = await getSignature(address, nonce);
+
+        const response = await authService.login(address, signature);
+        toast.success('loggedin successfully');
+        console.log(response);
+      }
+      catch(err){
+        toast.error('error while login');
+      }
+
+    }
+
     return (<>
       <div>  
         <nav className="navbar navbar-expand-lg p-3">
@@ -16,7 +69,7 @@ const Hero = () => {
                
               </ul>
               <div className="d-flex" >
-                <button className="btn text-dark border border-dark" type="submit"><b>Login</b></button>
+                <button className="btn text-dark border border-dark" type="button" onClick={onLogin}><b>Login</b></button>
               </div>
             </div>
           </div>
