@@ -6,6 +6,7 @@ import { Provider, useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './redux/store';
 import Hero from './auth/hero';
+import { ToastContainer } from 'react-toastify';
 
 function ProviderConfig() {
   const isLoggedIn = useSelector((state: any) => {
@@ -29,6 +30,7 @@ function ProviderConfig() {
           </Routes>
         )
       }
+      <ToastContainer position='bottom-left' />
       </div>
     </div>
   );
