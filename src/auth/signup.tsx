@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import * as authService from '../services/auth.service';
+import { AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
 
 const Signup = () => {
     const [role, setRole] = useState('doctor');
@@ -8,6 +11,32 @@ const Signup = () => {
     const [gender, setGender] = useState('male');
     const [degree, setDegree] = useState('');
     const [dob, setDob] = useState('');
+    const [address, setAddress] = useState('');
+
+    const navigate = useNavigate();
+
+    const getAddress = async () => {
+        try{
+            const address = await window.ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+            if(address.length === 0){
+                toast.error('No accounts found');
+                return '';
+            }
+            setAddress(address[0]);
+            return address[0];
+        }
+        catch(error: any){
+            if(error.code === 4001){
+                toast('Please connect to wallet');
+            }
+            else{
+                console.log(error);
+            }
+            return '';
+        }
+    }
 
     const onRoleChange = (event: any) => {
         const value = event.target.value;
@@ -39,8 +68,29 @@ const Signup = () => {
         setDob(value);
     }
 
-    const onSignup = () => {
-        console.log(firstName, lastName, gender, dob, degree, role);
+
+    const onAddresChange = (event: any) => {
+        const value = event.target.value;
+        setAddress(value);
+    }
+
+    const onSignup = async () => {
+        const address = await getAddress();
+        if(!address){
+            toast.error('Error in getting wallet address');
+            return;
+        }
+        const body = { firstName, lastName, gender, dob, degree, role, address };
+        try{
+            const response: AxiosResponse = await authService.signup(body);
+            const data = response.data;
+            console.log('signedup');
+            toast.success('Signup successful');
+            navigate('/');
+        }
+        catch(err){
+            console.log(err);
+        }
     }
 
     return (
@@ -62,6 +112,10 @@ const Signup = () => {
                                     <div className="mb-2">
                                         <label className="form-label">Last Name</label>
                                         <input type="text" className="form-control" onChange={onLastNameChange} />
+                                    </div>
+                                    <div className="mb-2">
+                                        <label className="form-label">Wallet Address</label>
+                                        <input type="text" className="form-control" value={address} onFocus={getAddress} onChange={onAddresChange} />
                                     </div>
                                     <div className="mb-2 row">
                                         <div className="col-sm-6">
