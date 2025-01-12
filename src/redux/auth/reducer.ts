@@ -6,6 +6,11 @@ const initState = {
     accessToken: null,
     role: null,
     address: null,
+    firstName: null,
+    lastName: null,
+    gender: null,
+    dob: null,
+    degree: null,
     err: null
 };
 
@@ -16,14 +21,14 @@ const AuthReducer = (state = initState, action: Action) => {
             return {
                 ...state,
                 ...data,
-                loading: false
+                isLoggedIn: true
             };
         
         case actions.LOGIN_FAILED:
             return {
                 ...state,
                 err,
-                loading: false
+                isLoggedIn: false
             }
 
         case actions.SIGNUP_SUCCESS:
