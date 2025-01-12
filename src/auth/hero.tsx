@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { getWeb3 } from "../services/web3.services";
 import { toast } from "react-toastify";
 import * as authService from '../services/auth.service';
+import { useDispatch } from "react-redux";
+import authActions from '../redux/auth/actions';
 
 const Hero = () => {
+    const dispatch = useDispatch();
 
     const getNonce = async (address: string) => {
       try{
@@ -31,14 +34,40 @@ const Hero = () => {
       }
     }
 
+    const requestAccount = async () => {
+      try{
+          const address = await window.ethereum.request({
+              method: 'eth_requestAccounts'
+          });
+          if(address.length === 0){
+              toast.error('No accounts found');
+              return '';
+          }
+          return address[0];
+      }
+      catch(error: any){
+          if(error.code === 4001){
+              toast('Please connect to wallet');
+          }
+          else{
+              console.log(error);
+          }
+          return '';
+      }
+  }
+
     const onLogin = async () => {
       const web3 = getWeb3();
 
       try{
-        const address = await web3.eth.getCoinbase();
+        let address = await web3.eth.getCoinbase();
         if(!address){
-          toast.error('No account found');
-          return;
+          address = await requestAccount();
+          
+          if(!address){
+            toast.error('No account found');
+            return;
+          }
         }
 
         const nonce = await getNonce(address);
@@ -46,6 +75,17 @@ const Hero = () => {
 
         const response = await authService.login(address, signature);
         toast.success('loggedin successfully');
+        const dispatchObj = {
+          accessToken: response.accessToken,
+          address: response._id,
+          degree: response.degree,
+          dob: response.dob,
+          firstName: response.first_name,
+          lastName: response.last_name,
+          role: response.role,
+          gender: response.gender,
+        }
+        dispatch(authActions.loginSuccess(dispatchObj));
         console.log(response);
       }
       catch(err){
