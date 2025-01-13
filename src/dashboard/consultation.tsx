@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import * as userService from '../services/user.service';
 
 const tab = {
     SYMPTOMS: 'SYMPTOMS',
@@ -9,6 +12,36 @@ const tab = {
 
 const Consultation = () => {
     const [currentTab, setCurrentTab] = useState(tab.SYMPTOMS);
+    const navigate = useNavigate();
+
+    const fetchPatientData = async (patientAddress: string) => {
+      try{
+        const response = await userService.getPatient(patientAddress);
+        const patient = response.data;
+
+        if(!patient){
+          toast.error('Patient not found');
+          navigate('/');
+          return;
+        }
+      }
+      catch(error){
+          toast.error('Failed to fetch patient. server error');
+          navigate('/');
+      }
+    } 
+
+    useEffect(() => {
+      const patientAddress = localStorage.getItem('patientAddress');
+      if(!patientAddress){
+        toast.error('Please start the consultation first');
+        navigate('/');
+        return;
+      }
+
+      fetchPatientData(patientAddress);
+
+    }, []);
 
     const selectTab = (tab: string) => {
         setCurrentTab(tab);

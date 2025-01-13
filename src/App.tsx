@@ -10,7 +10,6 @@ import { ToastContainer } from 'react-toastify';
 
 function ProviderConfig() {
   const isLoggedIn = useSelector((state: any) => {
-    console.log(state.auth);
     return state.auth.isLoggedIn
   });
 
