@@ -31,6 +31,21 @@ const AuthReducer = (state = initState, action: Action) => {
                 isLoggedIn: false
             }
 
+        case actions.LOGOUT_SUCCESS:
+            return {
+                ...state,
+                ...data,
+                ...initState,
+                isLoggedIn: false
+            }
+
+        case actions.LOGOUT_FAILED:
+            return {
+                ...state,
+                ...initState,
+                isLoggedIn: false
+            }
+
         case actions.SIGNUP_SUCCESS:
             return {
                 ...state,
