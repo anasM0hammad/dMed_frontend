@@ -5,6 +5,9 @@ const actions = {
     SIGNUP_SUCCESS: 'SIGNUP_SUCCESS',
     SIGNUP_FAILED: 'SIGNUP_FAILED',
 
+    LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
+    LOGOUT_FAILED: 'LOGOUT_FAILED',
+
     loginSuccess: (data: Object) => {
         return {
             type: actions.LOGIN_SUCCESS,
@@ -32,6 +35,20 @@ const actions = {
             err
         }
     },
+
+    logoutSuccess: () => {
+        return {
+            type: actions.LOGOUT_SUCCESS,
+            data: { isLoggedIn: false },
+        }
+    },
+
+    logoutFailed: () => {
+        return {
+            type: actions.LOGOUT_FAILED,
+            data: { isLoggedIn: false },
+        }
+    }
 }
 
 export default actions;

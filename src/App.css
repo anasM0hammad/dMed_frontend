@@ -58,3 +58,77 @@ color: inherit;
 .margin-wrapper{
 padding: 0 5vw 0 5vw;
 }
+
+.card-post{
+  border-left: solid 4px #5D87FF;
+  border-right: solid 0.5px #fff;
+  border-top: solid 0.5px #fff;
+  border-bottom: solid 0.5px #fff;
+  cursor: pointer;
+}
+
+.card-post:hover{
+  border: solid 0.5px #5D87FF;
+  border-left: solid 4px #5D87FF;
+}
+
+.card-body-post{
+  padding: 30px 30px 10px 30px;
+}
+
+.blur {
+  filter: blur(2.5px);
+}
+
+.card-box{
+  border-radius: 0;
+  margin: 0 0 12px 0 ;
+}
+
+.search-btn{
+  margin-top: auto;
+}
+
+.text-theme {
+  color: #5D87FF;
+}
+
+.nft-card{
+  cursor: pointer;
+  border: solid 1px #FFFFFF;
+}
+
+.nft-card:hover{
+  border: solid 1px #5D87FF;
+}
+
+.cursor{
+  cursor: pointer;
+}
+
+.post-form{
+  margin-top: 5px;
+}
+
+.pill-cross{
+  padding: 1px 5px 2px 5px;
+  cursor: pointer;
+}
+
+.langPill{
+  margin-top: 1px;
+  margin-right: 8px;
+}
+
+.side-panel{
+  height: 90vh;
+}
+
+.input-span{
+  border: solid 0.5px #DFE5EF;
+}
+
+.qr{
+  height: 7vh;
+  float: inline-end;
+}

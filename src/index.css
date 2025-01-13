@@ -1,3 +1,6 @@
 @import './assets/css/styles.min.css';
 @import './../node_modules/react-toastify/dist/ReactToastify.css';
 
+.container-bg{
+    background-color:whitesmoke;
+  }
