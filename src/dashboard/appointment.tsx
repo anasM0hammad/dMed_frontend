@@ -1,9 +1,46 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Error from "../components/error";
+import * as userService from '../services/user.service';
 
 const Appointment = () => {
     const role = useSelector((state: any) => {
         return state.auth.role;
-    })
+    });
+
+    const navigate = useNavigate();
+
+    const [patientAddress, setPatientAddress] = useState('');
+    const [error, setError] = useState('');
+
+    const onPatientAddress = (event: any) => {
+        setPatientAddress(event.target.value);
+    }
+
+    const startConsultation = async () => {
+        if(!error){
+            setError('Address is empty');
+            return;
+        }
+        try{
+            const response = await userService.getPatient(patientAddress);
+            const patient = response.data;
+
+            if(!patient){
+                setError(`Patient doesn't exist`);
+                return;
+            }
+            setError('');
+            localStorage.setItem('patientAddress', patientAddress);
+            toast.success('Consultation started');
+            navigate('/consult');
+        }
+        catch(error){
+            setError(`Patient doesn't exist`);
+        }
+    }
 
     const ConsultationComponent = () => {
         return (
@@ -18,30 +55,13 @@ const Appointment = () => {
                         <div className="row mx-auto">
                             <div className="col-sm-12">
                                 <div className="form-group row">
-                                    <div className="col-sm-4">
+                                    <div className="col-sm-8">
                                         <label><b>Patient Wallet Address</b></label>
-                                        <input className="form-control form-control-sm" />
+                                        <input className="form-control form-control-sm" autoFocus value={patientAddress} onChange={onPatientAddress}/>
+                                        { error ? <Error message={error} /> : <></>}
                                     </div>
                                     <div className="col-sm-4">
-                                        <label><b>Patient's Name</b></label>
-                                        <input className="form-control form-control-sm" />
-                                    </div>
-                                </div>
-                                <div className="form-group row mt-3">
-                                    <div className="col-sm-4">
-                                        <label><b>Gender</b></label>
-                                        <select className="form-control form-control-sm">
-                                            <option>Male</option>
-                                            <option>Female</option>
-                                            <option>Others</option>
-                                        </select>
-                                    </div>
-                                    <div className="col-sm-4">
-                                        <label><b>Date of Birth</b></label>
-                                        <input type="date" className="form-control form-control-sm" />
-                                    </div>
-                                    <div className="col-sm-4">
-                                        <button className="btn btn-primary btn-sm mt-3">Start Consultation</button>
+                                        <button className="btn btn-primary btn-sm mt-4" onClick={startConsultation}>Start Consultation</button>
                                     </div>
                                 </div>
                             </div>
