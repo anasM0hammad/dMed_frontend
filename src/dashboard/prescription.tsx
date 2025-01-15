@@ -1,4 +1,24 @@
+import { useContext, useEffect, useState } from "react";
+import { PrescriptionContext } from "../services/prescription.context";
+import { getStoreData } from "../redux/store";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 const Prescription = () => {
+    const navigate = useNavigate();
+    const { data, setData }: any = useContext(PrescriptionContext);
+    const storeData: any = getStoreData();
+    const [prescriptionDate, setPrecriptionDate] = useState('');
+    const [cost, setCost] = useState('');
+
+    useEffect(() => {
+      if(!data || !data.name || !data.dob || !data.gender || !data.prescription){
+        toast.error('Data missing from consultation');
+        navigate("/consult");
+        return;
+      } 
+    }, [data]);
+
     return (
     <div className="container-fluid">
         <div className="row">
@@ -8,9 +28,9 @@ const Prescription = () => {
               <div className="card-body">
                 <div className="row">
                   <div className="col-sm-6">
-                    <h5><b>Mohammad Anas</b></h5>
-                    Patient gender: <b>Male</b><br/>
-                    Patient age: <b>25 years</b><br/>
+                    <h5><b>{ data.name }</b></h5>
+                    Patient gender: <b>{ data.gender }</b><br/>
+                    Patient DOB: <b>{ data.dob }</b><br/>
                     12th January 2024
                   </div>
                   <div className="col-sm-6">
@@ -27,8 +47,8 @@ const Prescription = () => {
                 <hr/>
                 <div className="row">
                   <div className="col-sm-6">
-                    <h5><b>Dr Harsh vardhan</b></h5>
-                    MBBS,MD
+                    <h5><b>Dr { `${storeData.auth.firstName} ${storeData.auth.lastName}`  }</b></h5>
+                    { storeData.auth.degree }
                   </div>
                   <div className="col-sm-6">
                     <div className="row">
@@ -51,16 +71,16 @@ const Prescription = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th>Fever</th>
-                      <th>Moderate</th>
-                      <th>2 Days</th>
-                    </tr>
-                    <tr>
-                      <th>Cold</th>
-                      <th>Mild</th>
-                      <th>3 Days</th>
-                    </tr>
+                  { data.prescription?.symptoms && data.prescription?.symptoms.map((symptom: any) => {
+                      return (
+                          <tr>
+                            <th>{ symptom.name }</th>
+                            <th>{ symptom.severity }</th>
+                            <th>{ symptom.since }</th>
+                          </tr>
+                      )
+                    })
+                  }
                   </tbody>
                  </table>
                  <table className="table table-sm table-bordered">
@@ -72,11 +92,17 @@ const Prescription = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th>Fever</th>
-                      <th>Moderate</th>
-                      <th>2 Days</th>
-                    </tr>
+                    {
+                      data.prescription?.findings && data.prescription?.findings.map((finding: any) => {
+                        return (
+                          <tr>
+                            <th>{ finding.name }</th>
+                            <th>{ finding.severity }</th>
+                            <th>{ finding.since }</th>
+                          </tr>
+                        )
+                      })
+                    }
                   </tbody>
                  </table>
 
@@ -84,14 +110,18 @@ const Prescription = () => {
                   <thead className="table-dark">
                     <tr>
                       <th>Diagnosis</th>
-                      <th>Notes</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th>Fever</th>
-                      <th>Moderate</th>
-                    </tr>
+                    { 
+                      data.prescription.diagnosises && data.prescription.diagnosises.map((diagnosis: any) => {
+                        return (
+                          <tr>
+                            <th>{ diagnosis.name }</th>
+                          </tr>
+                        )
+                      })
+                    }
                   </tbody>
                  </table>
 
@@ -104,16 +134,22 @@ const Prescription = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th>Paracetamol</th>
-                      <th>2 Tablet</th>
-                      <th>2 Days</th>
-                    </tr>
+                    {
+                      data.prescription.medicines && data.prescription.medicines.map((medicine: any) => {
+                        return (
+                          <tr>
+                            <th>{ medicine.name }</th>
+                            <th>{ medicine.quantity }</th>
+                            <th>{ medicine.time }</th>
+                          </tr>
+                        )
+                      })
+                    }
                   </tbody>
                  </table>
                   <div className="form-group row mt-4">
                     <div className="col-sm-12">
-                      <p>Some very good prescription notes</p>
+                      <p>{ data.prescription?.notes }</p>
                     </div>
                   </div>
                   <div className="d-grid mt-4">
@@ -130,13 +166,13 @@ const Prescription = () => {
                   <div className="form-group mb-3">
                     <label className="form-label">Consultation charges</label>
                     <div className="input-group">
-                      <input type="text" className="form-control" />
+                      <input type="text" className="form-control" value={cost} onChange={(e) => setCost(e.target.value)} />
                       <span className="input-group-text input-span">wei</span>
                     </div>
                   </div>
                   <div className="form-group mb-3">
                     <label className="form-label">Follow up</label>
-                    <input className="form-control" type="date"/>
+                    <input className="form-control" type="date" value={prescriptionDate} onChange={(e) => setPrecriptionDate(e.target.value)} />
                   </div>
                 </div>
               </div>
