@@ -12,3 +12,11 @@ export const requestAddress = () => {
         
     }
 }
+
+export const getNFTFromIPFS = (tokenURI: string) => {
+
+}
+
+export const storeNFTToIPFS = (pdf: ArrayBuffer) => {
+    
+}
