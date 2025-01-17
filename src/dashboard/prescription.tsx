@@ -3,6 +3,9 @@ import { PrescriptionContext } from "../services/prescription.context";
 import { getStoreData } from "../redux/store";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { storeNFTToIPFS } from "../services/web3.services";
+import * as contract from '../ethereum/contract';
+import * as prescriptionService from '../services/prescription.service';
 
 const Prescription = () => {
     const navigate = useNavigate();
@@ -18,6 +21,21 @@ const Prescription = () => {
         return;
       } 
     }, [data]);
+
+
+    const generatePrescription = async () => {
+        const pdf = new ArrayBuffer(10);  // TODO: Convert prescription HTML to PDF using JSPDF and use that array buffer
+        try{
+          const response: any = await storeNFTToIPFS(pdf);
+          const tokenURI = response.data.tokenURI;
+          const tokenId = await contract.generatePrescription(tokenURI, Number(cost), localStorage.getItem('patientAddress') as string);
+          const res = await prescriptionService.updatePrescription({ prescriptionId: data['prescriptionId'], cost, tokenId, tokenURI});
+          toast.success('Consultation completed');
+        }
+        catch(error){
+          toast.error('Failed to generate prescription');
+        }
+    }
 
     return (
     <div className="container-fluid">
@@ -153,7 +171,7 @@ const Prescription = () => {
                     </div>
                   </div>
                   <div className="d-grid mt-4">
-                    <button className="btn btn-primary btn-block">Generate Prescription</button>
+                    <button className="btn btn-primary btn-block" onClick={generatePrescription}>Generate Prescription</button>
                   </div>
                 </div>
               </div>

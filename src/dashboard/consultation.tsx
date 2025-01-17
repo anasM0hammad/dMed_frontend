@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as userService from '../services/user.service';
 import { PrescriptionContext } from "../services/prescription.context";
+import * as prescriptionService from '../services/prescription.service';
 
 const tab = {
     SYMPTOMS: 'SYMPTOMS',
@@ -246,7 +247,7 @@ const Consultation = () => {
         setCurrentTab(tab);
     }
 
-    const generatePrescription = () => {
+    const generatePrescription = async () => {
       const prescriptionData ={
         symptoms,
         findings,
@@ -256,8 +257,16 @@ const Consultation = () => {
       };
 
       const newData: any = {...data, prescription: prescriptionData};
-      setData(newData);
-      navigate("/prescription")
+      try{
+        const createdPrescription = await prescriptionService.createPrescription({ patient: localStorage.getItem('patientAddress')});
+        newData['prescriptionId'] = createdPrescription.data.prescriptionId;
+        setData(newData);
+        navigate("/prescription");
+      }
+      catch(error){
+        toast.error('Failed to create prescription');
+      }
+      
     }
 
     const Symptoms = () => {

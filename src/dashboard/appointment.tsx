@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Error from "../components/error";
 import * as userService from '../services/user.service';
+import * as prescriptionService from '../services/prescription.service';
+import { buyNFT } from "../ethereum/contract";
+import { getNFTFromIPFS } from "../services/web3.services";
 
 const Appointment = () => {
     const role = useSelector((state: any) => {
@@ -13,7 +16,52 @@ const Appointment = () => {
     const navigate = useNavigate();
 
     const [patientAddress, setPatientAddress] = useState('');
+    const [prescriptions, setPrescriptions] = useState([]);
     const [error, setError] = useState('');
+
+    const fetchPrescriptions = async () => {
+        try{
+            const response = await prescriptionService.getPrescription();
+            const fetchedPrescriptions = response.data;
+            setPrescriptions(fetchedPrescriptions);
+        }
+        catch(err){
+            toast.error('Failed to fetch prescriptions');
+        }
+    }
+
+    const onPrescription = async (index: number) => {
+        if(role === 'patient'){
+            if(prescriptions[index]['status'] === 'pending'){
+                toast.warning('please buy the prescription');
+                const cost = prescriptions[index]['cost'];
+                const tokenId = prescriptions[index]['tokenId'];
+                try{
+                    const response = await buyNFT(tokenId, cost);
+                    const update = await prescriptionService.updatePrescription({prescriptionId: prescriptions[index]['_id']});
+                    const p: any = [...prescriptions];
+                    p[index]['status'] = 'paid';
+                    setPrescriptions(p);
+                    toast.success('Payment successful');
+                }
+                catch(error){
+                    toast.error('payment failed');
+                }
+            }
+            else{
+                const tokenURI = prescriptions[index]['tokenURI'];
+                const prescriptionPDF = await getNFTFromIPFS(tokenURI);
+            }
+        }
+        else{
+            const tokenURI = prescriptions[index]['tokenURI'];
+            const prescriptionPDF = await getNFTFromIPFS(tokenURI);
+        }
+    }
+
+    useEffect(() => {
+        fetchPrescriptions();
+    }, []);
 
     const onPatientAddress = (event: any) => {
         setPatientAddress(event.target.value);
@@ -81,26 +129,21 @@ const Appointment = () => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-sm-3">
-                        <div className="card p-2 nft-card">
-                            <img src="/assets/background/pdf-sample.png" className="card-img-top" alt="..." />
-                            <div className="card-body p-1">
-                                <h6>Mohammad Anas</h6>
-                                <span>12-dec-2024</span>
-                                <span className="text-success float-end">Paid</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-sm-3">
-                        <div className="card p-2 nft-card">
-                            <img src="/assets/background/pdf-sample.png" className="card-img-top" alt="..." />
-                            <div className="card-body p-1">
-                                <h6>Rajesh Kumar</h6>
-                                <span>17-dec-2024</span>
-                                <span className="text-danger float-end">Pending</span>
-                            </div>
-                        </div>
-                    </div>
+                    {
+                        prescriptions.map((prescription: any, i) => {
+                            return (
+                                <div className="col-sm-3">
+                                    <div className="card p-2 nft-card" onClick={onPrescription.bind(undefined,i)}>
+                                        <img src="/assets/background/pdf-sample.png" className="card-img-top" alt="..." />
+                                        <div className="card-body p-1">
+                                            <span>{ prescription.createdAt }</span>
+                                            <span className="text-success float-end">{ prescription.status }</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
                 </div>
             </div>
         )
