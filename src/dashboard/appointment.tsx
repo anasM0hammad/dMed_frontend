@@ -22,7 +22,7 @@ const Appointment = () => {
     const fetchPrescriptions = async () => {
         try{
             const response = await prescriptionService.getPrescription();
-            const fetchedPrescriptions = response.data;
+            const fetchedPrescriptions = response.data.prescriptions;
             setPrescriptions(fetchedPrescriptions);
         }
         catch(err){
@@ -121,6 +121,7 @@ const Appointment = () => {
     }
 
     const PrescriptionComponent = () => {
+        // TODO: To fetch the name of the patient or store the name of the patient as well in prescription model
         return (
             <div className="prescription-div">
                 <div className="row mt-4 mb-1 pt-3">
@@ -129,15 +130,16 @@ const Appointment = () => {
                     </div>
                 </div>
                 <div className="row">
-                    {
+                    { 
                         prescriptions.map((prescription: any, i) => {
                             return (
                                 <div className="col-sm-3">
                                     <div className="card p-2 nft-card" onClick={onPrescription.bind(undefined,i)}>
                                         <img src="/assets/background/pdf-sample.png" className="card-img-top" alt="..." />
                                         <div className="card-body p-1">
-                                            <span>{ prescription.createdAt }</span>
-                                            <span className="text-success float-end">{ prescription.status }</span>
+                                            <h6>Prescription NFT</h6> 
+                                            <span>{ prescription.createdAt.split('T')[0] }</span>
+                                            <span className={prescription.status === 'paid' ? 'text-success float-end' : 'text-danger float-end'}>{ prescription.status }</span>
                                         </div>
                                     </div>
                                 </div>

@@ -10,7 +10,6 @@ import { useState } from 'react';
 
 const Dashboard = (props: any) => {
     const [data, setData] = useState({});
-    console.log(data);
     return (
         <>  
             <Sidebar />
