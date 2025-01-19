@@ -105,11 +105,16 @@ This project enables storing Electronic Health Records (EHR) on the Ethereum blo
 - An ERC-721 token is minted with the `tokenURI` stored on-chain and mapped to a unique `tokenId`.
 - Prescription metadata on DB will be updated with `cost`, `tokenId` and `tokenURI`
 
+![alt text](https://github.com/anasM0hammad/dMed_frontend/blob/master/public/docs/prescription_flow.png?raw=true)
+
+
 ### 3. Fee Payment
 - Patients pay consultation fees to doctors through blockchain transactions.
 - Smart contracts handle the payment and ensure transparency and immutability.
 - On payment the contract will transfer the ownership of the NFT to the patient from the doctor
 - This provides authenticity of `EHR` made by doctor and payment confirmation from patient.
+
+![alt text](https://github.com/anasM0hammad/dMed_frontend/blob/master/public/docs/buy_nft.png?raw=true)
 
 
 ## Tech Stack
