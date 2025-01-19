@@ -1,46 +1,146 @@
-# Getting Started with Create React App
+# DMed
+## EHR on Web3 using Ethereum Blockchain
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
+This project enables storing Electronic Health Records (EHR) on the Ethereum blockchain using the ERC-721 protocol for NFTs. Prescriptions created by doctors are stored as NFTs on IPFS. The `tokenURI` generated is stored on-chain and mapped to a unique `tokenId`. The project also features Web3-powered signup and login functionality, allowing users to authenticate using wallets like MetaMask or Phantom.
 
-## Available Scripts
+## Features
+- **Decentralized EHR Storage:** Prescriptions stored securely as NFTs on IPFS.
+- **Web3 Authentication:** Signup and login using wallet addresses and cryptographic nonce verification.
+- **Role-based System:** Separate user roles for doctors and patients.
+- **Fee Payment:** Seamless fee payment mechanism for doctors using blockchain transactions.
 
-In the project directory, you can run:
+## Prerequisites
+- Node.js (v20+)
+- MetaMask or Phantom wallet
+- Ethereum network (e.g., Rinkeby/Testnet or Mainnet)
+- IPFS setup (or Infura for IPFS storage)
 
-### `npm start`
+## Installation for frontend
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/anasM0hammad/dMed_frontend.git
+   cd your-repo
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure environment variables in a `.env` file:
+   ```env
+   REACT_APP_CONTRACT_ADDRESS=<address of deployed contract>
+   REACT_APP_INFURA_PROJECT_ID=<your-infura-project-id>
+   REACT_APP_INFURA_PROJECT_SECRET=<your-infura-project-secret>
+   ```
+4. Start the application:
+   ```bash
+   npm start
+   ```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Installation for backend
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/anasM0hammad/dMed_backend.git
+   cd your-repo
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure environment variables in a `.env` file:
+   ```env
+   MONGODB_URI=mongodb:://URI
+   PORT=port number to run on
+   SALT=for JWT
+   ```
+4. Start the application:
+   ```bash
+   npm start
+   ```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## deploying contracts
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/anasM0hammad/dMed_contracts.git
+   cd your-repo
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. use truffle to compile and deploy:
+   ```
+   truffle comiple
+   truffle migrate
+   ```
 
-### `npm test`
+## Workflow
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 1. Authentication
+- **Signup:**
+  - Users sign up as a doctor or patient using their wallet address as a unique identifier.
+  - All the details will be stored in mongodb database
+  - Wallet address will be used as userId.
+  - A Nonce will be stored for each user entry
 
-### `npm run build`
+- **Login:**
+  - A nonce is generated and stored on the backend.
+  - Frontend will do a `getNonce()` call to fetch the user nonce.
+  - The user signs the nonce using their wallet (MetaMask/Phantom).
+  - The signature then will be sent to backend.
+  - The backend verifies the signed nonce and issues a JWT token upon successful verification.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Creating a Prescription
+- Doctors will start the consultation with a valid patient address
+- Once done, doctor will add values like symptoms, diagnosis, medicine and findings with prescriptions notes.
+- Once consultation is completed doctor will `generate prescription` which will create an entry in db with prescription metadata
+- A PDF preview of prescription will be open and other data like consultation cost (in wei) and notes will be entered by doctor
+- Doctor digitally signs the PDF and signature will be marked as QR Code on PDF.
+- Doctor then end the consultation with PDF gets stored on IPFS returning the tokenURI
+- A contract call on ethereum network will be made to `generate NFT` with given `tokenURI`, `cost`, `patientAddress` and doctor as owner
+- An ERC-721 token is minted with the `tokenURI` stored on-chain and mapped to a unique `tokenId`.
+- Prescription metadata on DB will be updated with `cost`, `tokenId` and `tokenURI`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. Fee Payment
+- Patients pay consultation fees to doctors through blockchain transactions.
+- Smart contracts handle the payment and ensure transparency and immutability.
+- On payment the contract will transfer the ownership of the NFT to the patient from the doctor
+- This provides authenticity of EHR made by doctor and payment confirmation from patient.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Tech Stack
+- **Blockchain:** Ethereum, ERC-721, Solidity, Web3, Remix, Truffle
+- **Storage:** IPFS, MongoDB
+- **Frontend:** React.js, HTML, CSS
+- **Backend:** Node.js, Express, Mongoose
+- **Authentication:** JWT, Cryptography
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Getting Started
+1. Set up a MetaMask or Phantom wallet.
+2. Deploy the smart contracts using the provided scripts:
+   ```bash
+   npm run deploy
+   ```
+3. Access the application in your browser:
+   ```bash
+   http://localhost:3000
+   ```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Future Scope
+- SnomedCT can be integrated for retrieving medical data during consultation
+- On Confirmation of payment backend can update the status of prescription using events
+- Allow login/signup through other methods like email/passsword and social auth
+- An extended feature can be implemeted for pharmacies for prescription verification
+- so on...
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Contributing
+Contributions are welcome! Please follow these steps:
+1. Fork the repository.
+2. Create a new branch for your feature/bugfix.
+3. Submit a pull request with detailed description.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Contact
+For any queries, feel free to reach out:
+- **Email:** anas.1633.m@gmail.com
+- **GitHub:** [anasM0hammad](https://github.com/anasM0hammad)
