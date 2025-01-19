@@ -1,11 +1,11 @@
 # DMed
-## EHR on Web3 using Ethereum Blockchain
+## Web3 based EHR using Ethereum Blockchain & IPFS
 
 ## Overview
-This project enables storing Electronic Health Records (EHR) on the Ethereum blockchain using the ERC-721 protocol for NFTs. Prescriptions created by doctors are stored as NFTs on IPFS. The `tokenURI` generated is stored on-chain and mapped to a unique `tokenId`. The project also features Web3-powered signup and login functionality, allowing users to authenticate using wallets like MetaMask or Phantom.
+This project enables storing Electronic Health Records (EHR) on the Ethereum blockchain using the `ERC-721` protocol for `NFTs`. Prescriptions created by doctors are stored as NFTs on `IPFS`. The `tokenURI` generated is stored on-chain and mapped to a unique `tokenId`. The project also features Web3-powered signup and login functionality, allowing users to authenticate using wallets like MetaMask or Phantom.
 
 ## Features
-- **Decentralized EHR Storage:** Prescriptions stored securely as NFTs on IPFS.
+- **Decentralized EHR Storage:** Prescriptions stored securely as `NFTs` on `IPFS`.
 - **Web3 Authentication:** Signup and login using wallet addresses and cryptographic nonce verification.
 - **Role-based System:** Separate user roles for doctors and patients.
 - **Fee Payment:** Seamless fee payment mechanism for doctors using blockchain transactions.
@@ -90,6 +90,10 @@ This project enables storing Electronic Health Records (EHR) on the Ethereum blo
   - The signature then will be sent to backend.
   - The backend verifies the signed nonce and issues a JWT token upon successful verification.
 
+
+![alt text](https://github.com/anasM0hammad/dMed_frontend/blob/master/public/docs/login.png?raw=true)
+
+
 ### 2. Creating a Prescription
 - Doctors will start the consultation with a valid patient address
 - Once done, doctor will add values like symptoms, diagnosis, medicine and findings with prescriptions notes.
@@ -105,18 +109,18 @@ This project enables storing Electronic Health Records (EHR) on the Ethereum blo
 - Patients pay consultation fees to doctors through blockchain transactions.
 - Smart contracts handle the payment and ensure transparency and immutability.
 - On payment the contract will transfer the ownership of the NFT to the patient from the doctor
-- This provides authenticity of EHR made by doctor and payment confirmation from patient.
+- This provides authenticity of `EHR` made by doctor and payment confirmation from patient.
 
 
 ## Tech Stack
-- **Blockchain:** Ethereum, ERC-721, Solidity, Web3, Remix, Truffle
-- **Storage:** IPFS, MongoDB
-- **Frontend:** React.js, HTML, CSS
-- **Backend:** Node.js, Express, Mongoose
-- **Authentication:** JWT, Cryptography
+- **Blockchain:** `Ethereum`, `ERC-721`, `Solidity`, `Web3`, `Remix`, `Truffle`
+- **Storage:** `IPFS`, `MongoDB`
+- **Frontend:** `React.js`, `HTML`, `CSS`
+- **Backend:** `Node.js`, `Express`, `Mongoose`
+- **Authentication:** `JWT`, `Cryptography`
 
 ## Getting Started
-1. Set up a MetaMask or Phantom wallet.
+1. Set up a `MetaMask` or `Phantom` wallet.
 2. Deploy the smart contracts using the provided scripts:
    ```bash
    npm run deploy
